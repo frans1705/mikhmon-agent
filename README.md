@@ -24,8 +24,8 @@
 *Monitoring Genieacs*
 
 ### Voucher Preview
-![Voucher Preview](img/voucher_preview.png)
-*Preview voucher dengan QR code dan opsi print*
+![Voucher Preview](img/laporan.png)
+*Preview laporan penjualan Voucher Online*
 
 ### Admin Panel
 ![Admin Panel](img/admin_panel.png)
@@ -204,5 +204,6 @@ Project Link: [https://github.com/alijayanet/mikhmon-agent](https://github.com/a
   Made with ❤️ by Ali Jaya Net
 
 </p>
+
 
 

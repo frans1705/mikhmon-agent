@@ -11,14 +11,36 @@
 ## 📋 Table of Contents
 
 - [Tentang Proyek](#tentang-proyek)
+- [Screenshot](#screenshot)
 - [Fitur Utama](#fitur-utama)
 - [Arsitektur Sistem](#arsitektur-sistem)
 - [Instalasi](#instalasi)
-- [Screenshot](#screenshot)
 - [Teknologi yang Digunakan](#teknologi-yang-digunakan)
 - [Kontribusi](#kontribusi)
 - [Lisensi](#lisensi)
 - [Kontak](#kontak)
+
+## 📸 Screenshot
+
+### Dashboard Agent
+![Dashboard Agent](img/agent_dashboard.png)
+*Dashboard agent dengan ringkasan saldo dan statistik*
+
+### Generate Voucher
+![Generate Voucher](img/generate_voucher.png)
+*Form generate voucher dengan preview modern*
+
+### Voucher Preview
+![Voucher Preview](img/voucher_preview.png)
+*Preview voucher dengan QR code dan opsi print*
+
+### Admin Panel
+![Admin Panel](img/admin_panel.png)
+*Panel administrasi untuk manajemen agen dan harga*
+
+### Public Order Page
+![Public Order](img/public_order.png)
+*Landing page untuk pembelian langsung oleh customer*
 
 ## 📖 Tentang Proyek
 
@@ -137,28 +159,6 @@ graph TB
 1. Daftar di Tripay/Xendit/Duitku
 2. Dapatkan API keys
 3. Konfigurasi di `agent-admin/payment_gateway_config.php`
-
-## 📸 Screenshot
-
-### Dashboard Agent
-![Dashboard Agent](img/agent_dashboard.png)
-*Dashboard agent dengan ringkasan saldo dan statistik*
-
-### Generate Voucher
-![Generate Voucher](img/generate_voucher.png)
-*Form generate voucher dengan preview modern*
-
-### Voucher Preview
-![Voucher Preview](img/voucher_preview.png)
-*Preview voucher dengan QR code dan opsi print*
-
-### Admin Panel
-![Admin Panel](img/admin_panel.png)
-*Panel administrasi untuk manajemen agen dan harga*
-
-### Public Order Page
-![Public Order](img/public_order.png)
-*Landing page untuk pembelian langsung oleh customer*
 
 ## 🛠️ Teknologi yang Digunakan
 

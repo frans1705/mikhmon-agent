@@ -45,35 +45,32 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
     margin-bottom: 0;
 }
 
-.billing-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
 }
 
-.billing-summary .box {
-    border-radius: 14px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-    min-height: 90px;
-    color: #fff;
+.customer-table .action-cell {
+    min-width: 110px;
 }
 
-.billing-summary .box.bg-blue {
-    background: linear-gradient(135deg, #2563eb, #60a5fa);
+.customer-table .btn-group {
+    display: inline-flex;
+    gap: 4px;
+    flex-wrap: wrap;
 }
 
-.billing-summary .box.bg-green {
-    background: linear-gradient(135deg, #059669, #10b981);
-}
+@media (max-width: 768px) {
+    .customer-table th,
+    .customer-table td {
+        font-size: 13px;
+        white-space: nowrap;
+    }
 
-.billing-summary .box.bg-yellow {
-    background: linear-gradient(135deg, #f59e0b, #facc15);
-    color: #1f2937;
-}
-
-.billing-summary .box.bg-red {
-    background: linear-gradient(135deg, #dc2626, #f87171);
+    .customer-table .btn-group {
+        justify-content: flex-start;
+    }
 }
 
 .customer-table {
@@ -139,10 +136,12 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
 #customerEditModal { display: none; }
 #customerDeleteModal { display: none; }
 #markPaidModal { display: none; }
+#customerImportModal { display: none; }
 
 /* Modal Styling */
 #customerEditModal,
-#markPaidModal {
+#markPaidModal,
+#customerImportModal {
     position: fixed;
     top: 0;
     left: 0;
@@ -155,7 +154,8 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
 }
 
 #customerEditModal > div,
-#markPaidModal > div {
+#markPaidModal > div,
+#customerImportModal > div {
     background: white;
     width: 80%;
     max-width: 600px;
@@ -167,22 +167,26 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
 }
 
 #customerEditModal:not([style*="display: none"]),
-#markPaidModal:not([style*="display: none"]) {
+#markPaidModal:not([style*="display: none"]),
+#customerImportModal:not([style*="display: none"]) {
     opacity: 1;
 }
 
 #customerEditModal:not([style*="display: none"]) > div,
-#markPaidModal:not([style*="display: none"]) > div {
+#markPaidModal:not([style*="display: none"]) > div,
+#customerImportModal:not([style*="display: none"]) > div {
     transform: translateY(0);
 }
 
 #customerEditModal[style*="display: none"],
-#markPaidModal[style*="display: none"] {
+#markPaidModal[style*="display: none"],
+#customerImportModal[style*="display: none"] {
     opacity: 0;
 }
 
 #customerEditModal[style*="display: none"] > div,
-#markPaidModal[style*="display: none"] > div {
+#markPaidModal[style*="display: none"] > div,
+#customerImportModal[style*="display: none"] > div {
     transform: translateY(-20px);
 }
 
@@ -239,26 +243,53 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <h3><i class="fa fa-users"></i> Pelanggan Billing</h3>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="fa fa-users"></i> Pelanggan Billing</h3>
+                <div class="btn-group">
+                    <a href="./billing/customers_export.php" class="btn btn-sm btn-outline-success" title="Export pelanggan ke Excel">
+                        <i class="fa fa-download"></i> Export
+                    </a>
+                    <a href="./billing/customers_export.php?template=1" class="btn btn-sm btn-outline-secondary" title="Unduh template Excel">
+                        <i class="fa fa-file-excel-o"></i> Template
+                    </a>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showImportModal()" title="Import pelanggan dari Excel">
+                        <i class="fa fa-upload"></i> Import
+                    </button>
+                </div>
             </div>
             <div class="card-body">
-                <div class="billing-summary">
-                    <div class="box bg-blue bmh-75">
-                        <h1><?= number_format($totalCustomers, 0); ?></h1>
-                        <div><i class="fa fa-users"></i> Total Pelanggan</div>
+                <div class="row mb-3">
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-blue bmh-75">
+                            <h1><?= number_format($totalCustomers, 0); ?>
+                                <span style="font-size: 15px;">customers</span>
+                            </h1>
+                            <div><i class="fa fa-users"></i> Total Pelanggan</div>
+                        </div>
                     </div>
-                    <div class="box bg-green bmh-75">
-                        <h1><?= number_format($activeCustomers, 0); ?></h1>
-                        <div><i class="fa fa-check"></i> Aktif</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-green bmh-75">
+                            <h1><?= number_format($activeCustomers, 0); ?>
+                                <span style="font-size: 15px;">active</span>
+                            </h1>
+                            <div><i class="fa fa-check"></i> Aktif</div>
+                        </div>
                     </div>
-                    <div class="box bg-yellow bmh-75">
-                        <h1><?= number_format($isolatedCustomers, 0); ?></h1>
-                        <div><i class="fa fa-exclamation-triangle"></i> Terisolasi</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-yellow bmh-75">
+                            <h1><?= number_format($isolatedCustomers, 0); ?>
+                                <span style="font-size: 15px;">isolated</span>
+                            </h1>
+                            <div><i class="fa fa-exclamation-triangle"></i> Terisolasi</div>
+                        </div>
                     </div>
-                    <div class="box bg-red bmh-75">
-                        <h1>H+3</h1>
-                        <div><i class="fa fa-clock-o"></i> Reminder Default</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-red bmh-75">
+                            <h1>H+3
+                                <span style="font-size: 15px;">reminder</span>
+                            </h1>
+                            <div><i class="fa fa-clock-o"></i> Reminder Default</div>
+                        </div>
                     </div>
                 </div>
 
@@ -270,13 +301,13 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
                     <table class="customer-table">
                         <thead>
                             <tr>
+                                <th style="width: 110px;">Aksi</th>
                                 <th>Nama</th>
                                 <th>No. Layanan / Telepon</th>
                                 <th>PPPoE Username</th>
                                 <th>Paket</th>
                                 <th>Tgl Tagihan</th>
                                 <th>Status</th>
-                                <th style="width: 100px;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -289,6 +320,22 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
                             <?php else: ?>
                                 <?php foreach ($customers as $customer): ?>
                                     <tr>
+                                        <td class="action-cell">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-success" onclick="markLatestInvoicePaid(<?= $customer['id']; ?>)" title="Tandai invoice terbaru lunas">
+                                                    <i class="fa fa-check"></i>
+                                                </button>
+                                                <a class="btn btn-sm btn-outline-info" href="./?hotspot=billing-invoices&session=<?= urlencode($session); ?>&customer=<?= $customer['id']; ?>" title="Lihat detail tagihan">
+                                                    <i class="fa fa-file-text-o"></i>
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-primary" onclick="showEditModal(<?= $customer['id']; ?>)" title="Edit pelanggan">
+                                                    <i class="fa fa-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(<?= $customer['id']; ?>)" title="Hapus pelanggan">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
                                         <td>
                                             <strong><?= htmlspecialchars($customer['name']); ?></strong><br>
                                             <small><?= htmlspecialchars($customer['email'] ?? ''); ?></small>
@@ -317,22 +364,6 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
                                             <span class="tag-pill <?= $status === 'active' ? 'active' : 'inactive'; ?>">
                                                 <?= ucfirst($status); ?>
                                             </span>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <button class="btn btn-sm btn-outline-success" onclick="markLatestInvoicePaid(<?= $customer['id']; ?>)" title="Tandai invoice terbaru lunas">
-                                                    <i class="fa fa-check"></i>
-                                                </button>
-                                                <a class="btn btn-sm btn-outline-info" href="./?hotspot=billing-invoices&session=<?= urlencode($session); ?>&customer=<?= $customer['id']; ?>" title="Lihat detail tagihan">
-                                                    <i class="fa fa-file-text-o"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-primary" onclick="showEditModal(<?= $customer['id']; ?>)" title="Edit pelanggan">
-                                                    <i class="fa fa-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(<?= $customer['id']; ?>)" title="Hapus pelanggan">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -550,6 +581,28 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
     </div>
 </div>
 
+<!-- Modal Import Pelanggan -->
+<div id="customerImportModal">
+    <div>
+        <h3><i class="fa fa-upload"></i> Import Pelanggan Billing</h3>
+        <p>Unggah file Excel (.xlsx) dengan format sesuai template. Kolom wajib: Nama, No. WhatsApp, PPPoE Username, Paket.</p>
+        <form id="customerImportForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="import_file">File Excel (.xlsx)</label>
+                <input type="file" id="import_file" name="file" class="form-control" accept=".xlsx" required>
+            </div>
+            <div class="form-group">
+                <small>Butuh template? <a href="./billing/customers_export.php?template=1" target="_blank">Download di sini</a>.</small>
+            </div>
+            <div id="importResult" class="alert" style="display:none;"></div>
+            <div class="d-flex justify-content-end" style="gap:10px;">
+                <button type="button" class="btn btn-secondary" onclick="closeImportModal()">Batal</button>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Proses Import</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Modal Hapus Pelanggan -->
 <div class="modal fade" id="customerDeleteModal" tabindex="-1" role="dialog" aria-labelledby="customerDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -581,6 +634,7 @@ $isolatedCustomers = count(array_filter($customers, static fn ($row) => (int)($r
 <script src="./js/billing_forms.js"></script>
 <script>
 let markPaidContext = null;
+let importInProgress = false;
 
 function markLatestInvoicePaid(customerId) {
     showLoading();
@@ -724,6 +778,29 @@ function hideLoading() {
     loader.style.display = 'none';
 }
 
+function showImportModal() {
+    const modal = document.getElementById('customerImportModal');
+    document.getElementById('importResult').style.display = 'none';
+    document.getElementById('importResult').className = 'alert';
+    document.getElementById('importResult').textContent = '';
+    if (!importInProgress) {
+        document.getElementById('customerImportForm').reset();
+    }
+    modal.style.display = 'block';
+    modal.style.opacity = '1';
+    modal.querySelector('div').style.transform = 'translateY(0)';
+}
+
+function closeImportModal() {
+    const modal = document.getElementById('customerImportModal');
+    modal.style.opacity = '0';
+    modal.querySelector('div').style.transform = 'translateY(-20px)';
+    setTimeout(() => {
+        modal.style.display = 'none';
+        importInProgress = false;
+    }, 300);
+}
+
 function showEditModal(customerId) {
     showLoading();
     
@@ -789,7 +866,65 @@ function confirmDelete(customerId) {
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('modal-backdrop')) {
         hideEditModal();
+        closeImportModal();
     }
+});
+
+document.getElementById('customerImportForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const fileInput = document.getElementById('import_file');
+    const resultBox = document.getElementById('importResult');
+
+    if (!fileInput.files.length) {
+        resultBox.style.display = 'block';
+        resultBox.className = 'alert alert-danger';
+        resultBox.textContent = 'Silakan pilih file Excel terlebih dahulu.';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    importInProgress = true;
+    showLoading();
+
+    fetch('./billing/customers_import.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            resultBox.style.display = 'block';
+
+            if (data.success) {
+                resultBox.className = 'alert alert-success';
+                resultBox.textContent = `Import selesai. Berhasil: ${data.imported}, Gagal: ${data.failed}`;
+
+                if (Array.isArray(data.errors) && data.errors.length > 0) {
+                    const list = document.createElement('ul');
+                    data.errors.forEach(err => {
+                        const li = document.createElement('li');
+                        li.textContent = err;
+                        list.appendChild(li);
+                    });
+                    resultBox.appendChild(list);
+                }
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                resultBox.className = 'alert alert-danger';
+                resultBox.textContent = data.message || 'Import gagal dijalankan.';
+            }
+        })
+        .catch(() => {
+            hideLoading();
+            resultBox.style.display = 'block';
+            resultBox.className = 'alert alert-danger';
+            resultBox.textContent = 'Terjadi kesalahan saat memproses import.';
+        });
 });
 </script>
 </div>

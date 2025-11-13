@@ -59,29 +59,6 @@ $revenueTrend = $revenueTrendStmt->fetchAll(PDO::FETCH_ASSOC);
     margin-bottom: 0;
 }
 
-.billing-module .box {
-    border-radius: 14px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-    color: #fff;
-}
-
-.billing-module .box.bg-green {
-    background: linear-gradient(135deg, #059669, #10b981);
-}
-
-.billing-module .box.bg-red {
-    background: linear-gradient(135deg, #dc2626, #f87171);
-}
-
-.billing-module .box.bg-blue {
-    background: linear-gradient(135deg, #2563eb, #60a5fa);
-}
-
-.billing-module .box.bg-yellow {
-    background: linear-gradient(135deg, #f59e0b, #facc15);
-    color: #1f2937;
-}
-
 .billing-module .list-group-item {
     font-size: 14px;
     line-height: 1.55;
@@ -97,25 +74,10 @@ $revenueTrend = $revenueTrendStmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
-.billing-module .summary-row .box {
-    width: 100%;
-}
-
 .billing-module .chart-card,
 .billing-module .due-card {
     border-radius: 14px;
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-}
-
-.billing-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.billing-summary .box {
-    min-height: 90px;
 }
 </style>
 <div class="billing-module">
@@ -126,22 +88,36 @@ $revenueTrend = $revenueTrendStmt->fetchAll(PDO::FETCH_ASSOC);
                 <h3><i class="fa fa-credit-card"></i> Billing Dashboard</h3>
             </div>
             <div class="card-body">
-                <div class="billing-summary">
-                    <div class="box bg-green bmh-75">
-                        <h1><?= number_format($invoiceSummary['paid'], 0); ?></h1>
-                        <div><i class="fa fa-check"></i> Invoice Lunas Bulan Ini</div>
+                <div class="row mb-3">
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-green bmh-75">
+                            <h1><?= number_format($invoiceSummary['paid'], 0); ?>
+                                <span style="font-size: 15px;">paid</span>
+                            </h1>
+                            <div><i class="fa fa-check"></i> Invoice Lunas Bulan Ini</div>
+                        </div>
                     </div>
-                    <div class="box bg-red bmh-75">
-                        <h1><?= number_format($invoiceSummary['total'] - $invoiceSummary['paid'], 0); ?></h1>
-                        <div><i class="fa fa-exclamation-triangle"></i> Invoice Belum Lunas</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-red bmh-75">
+                            <h1><?= number_format($invoiceSummary['total'] - $invoiceSummary['paid'], 0); ?>
+                                <span style="font-size: 15px;">unpaid</span>
+                            </h1>
+                            <div><i class="fa fa-exclamation-triangle"></i> Invoice Belum Lunas</div>
+                        </div>
                     </div>
-                    <div class="box bg-blue bmh-75">
-                        <h1>Rp <?= number_format($invoiceSummary['paid_amount'], 0, ',', '.'); ?></h1>
-                        <div><i class="fa fa-money"></i> Pendapatan Bulan Ini</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-blue bmh-75">
+                            <h1 style="font-size: 18px;">Rp <?= number_format($invoiceSummary['paid_amount'], 0, ',', '.'); ?></h1>
+                            <div><i class="fa fa-money"></i> Pendapatan Bulan Ini</div>
+                        </div>
                     </div>
-                    <div class="box bg-yellow bmh-75">
-                        <h1><?= number_format($customerSummary['active_customers'], 0); ?></h1>
-                        <div><i class="fa fa-users"></i> Pelanggan Aktif</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-yellow bmh-75">
+                            <h1><?= number_format($customerSummary['active_customers'], 0); ?>
+                                <span style="font-size: 15px;">active</span>
+                            </h1>
+                            <div><i class="fa fa-users"></i> Pelanggan Aktif</div>
+                        </div>
                     </div>
                 </div>
 
@@ -161,10 +137,35 @@ $revenueTrend = $revenueTrendStmt->fetchAll(PDO::FETCH_ASSOC);
                             <div class="card-header">
                                 <h3><i class="fa fa-calendar"></i> Tagihan Jatuh Tempo (7 Hari)</h3>
                             </div>
-                            <div class="card-body" style="max-height: 260px; overflow-y: auto;">
+                            <div class="card-body table-responsive">
+                                <div class="d-block d-md-none" style="background: #fff3cd; padding: 8px 12px; margin-bottom: 10px; border-radius: 3px; font-size: 12px; color: #856404;">
+                                    <i class="fa fa-hand-o-right"></i> Geser tabel ke kanan untuk melihat semua kolom
+                                </div>
                                 <?php if (empty($upcomingDueInvoices)): ?>
                                     <div class="alert bg-light">Tidak ada tagihan jatuh tempo dalam 7 hari.</div>
                                 <?php else: ?>
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th class="sticky-col">Pelanggan</th>
+                                                <th>Tanggal Jatuh Tempo</th>
+                                                <th>Paket</th>
+                                                <th>Nominal</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($upcomingDueInvoices as $invoice): ?>
+                                                <tr>
+                                                    <td class="sticky-col"><?= htmlspecialchars($invoice['customer_name']); ?></td>
+                                                    <td><?= date('d M', strtotime($invoice['due_date'])); ?></td>
+                                                    <td><?= htmlspecialchars($invoice['profile_name'] ?? '-'); ?></td>
+                                                    <td>Rp <?= number_format($invoice['amount'], 0, ',', '.'); ?></td>
+                                                    <td><span class="badge badge-<?= $invoice['status']; ?>"><?= ucfirst($invoice['status']); ?></span></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
                                     <ul class="list-group">
                                         <?php foreach ($upcomingDueInvoices as $invoice): ?>
                                             <li class="list-group-item" style="border-left: 4px solid #f0ad4e;">

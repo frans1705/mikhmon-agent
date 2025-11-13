@@ -81,31 +81,49 @@ if ($sessionName) {
     margin-bottom: 0;
 }
 
-.billing-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
+.summary-row {
     margin-bottom: 20px;
 }
 
-.billing-summary .box {
-    border-radius: 14px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+.summary-row .box {
     min-height: 90px;
-    color: #fff;
 }
 
-.billing-summary .box.bg-blue {
-    background: linear-gradient(135deg, #2563eb, #60a5fa);
+.summary-row .box h1 {
+    margin: 0;
+    font-size: 32px;
 }
 
-.billing-summary .box.bg-green {
-    background: linear-gradient(135deg, #059669, #10b981);
+.summary-row .box h1 span {
+    display: block;
+    font-size: 15px;
 }
 
-.billing-summary .box.bg-yellow {
-    background: linear-gradient(135deg, #f59e0b, #facc15);
-    color: #1f2937;
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.profile-table .action-cell {
+    min-width: 110px;
+}
+
+.profile-table .btn-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+@media (max-width: 768px) {
+    .summary-row .box h1 {
+        font-size: 24px;
+    }
+
+    .profile-table th,
+    .profile-table td {
+        font-size: 13px;
+        white-space: nowrap;
+    }
 }
 
 .profile-table {
@@ -196,22 +214,42 @@ if ($sessionName) {
                 <h3><i class="fa fa-sliders"></i> Profil Paket Billing</h3>
             </div>
             <div class="card-body">
-                <div class="billing-summary">
-                    <div class="box bg-blue bmh-75">
-                        <h1><?= number_format($totalProfiles, 0); ?></h1>
-                        <div><i class="fa fa-list"></i> Total Profil</div>
+                <div class="row mb-3">
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-blue bmh-75">
+                            <h1><?= number_format($totalProfiles, 0); ?>
+                                <span style="font-size: 15px;">profiles</span>
+                            </h1>
+                            <div><i class="fa fa-list"></i> Total Profil</div>
+                        </div>
                     </div>
-                    <div class="box bg-green bmh-75">
-                        <h1>
-                            <?= number_format(array_sum(array_map(static function ($profile) {
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-green bmh-75">
+                            <h1><?= number_format(array_sum(array_map(static function ($profile) {
                                 return (float)($profile['price_monthly'] ?? 0);
-                            }, $profiles)), 0, ',', '.'); ?>
-                        </h1>
-                        <div><i class="fa fa-money"></i> Akumulasi Harga</div>
+                            }, $profiles)), 0, ',', '.'); ?></h1>
+                            <div><i class="fa fa-money"></i> Akumulasi Harga</div>
+                        </div>
                     </div>
-                    <div class="box bg-yellow bmh-75">
-                        <h1>ISOLIR</h1>
-                        <div><i class="fa fa-exclamation-triangle"></i> Profil Isolasi Default</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-yellow bmh-75">
+                            <h1><?= number_format(count(array_filter($profiles, static function ($profile) {
+                                return !empty($profile['mikrotik_profile_isolation']) && strcasecmp($profile['mikrotik_profile_isolation'], 'ISOLIR') === 0;
+                            })), 0); ?>
+                                <span style="font-size: 15px;">isolir</span>
+                            </h1>
+                            <div><i class="fa fa-exclamation-triangle"></i> Gunakan Isolasi</div>
+                        </div>
+                    </div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-aqua bmh-75">
+                            <h1><?= number_format(count(array_filter($profiles, static function ($profile) {
+                                return (float)($profile['price_monthly'] ?? 0) >= 100000;
+                            })), 0); ?>
+                                <span style="font-size: 15px;">premium</span>
+                            </h1>
+                            <div><i class="fa fa-star"></i> Harga ≥ 100K</div>
+                        </div>
                     </div>
                 </div>
 
@@ -228,25 +266,19 @@ if ($sessionName) {
                         <table class="profile-table">
                             <thead>
                                 <tr>
+                                    <th style="width: 110px;">Aksi</th>
                                     <th>Nama Profil</th>
                                     <th>Harga Bulanan</th>
                                     <th>Profil MikroTik</th>
                                     <th>Profil Isolasi</th>
                                     <th>Kecepatan</th>
                                     <th>Dibuat</th>
-                                    <th style="width: 100px;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($profiles as $profile): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($profile['profile_name']); ?></strong></td>
-                                        <td>Rp <?= number_format($profile['price_monthly'], 0, ',', '.'); ?></td>
-                                        <td><?= htmlspecialchars($profile['mikrotik_profile_normal']); ?></td>
-                                        <td><?= htmlspecialchars($profile['mikrotik_profile_isolation']); ?></td>
-                                        <td><?= htmlspecialchars($profile['speed_label'] ?? '-'); ?></td>
-                                        <td><?= date('d M Y H:i', strtotime($profile['created_at'])); ?></td>
-                                        <td>
+                                        <td class="action-cell">
                                             <div class="btn-group">
                                                 <button class="btn btn-sm btn-outline-primary" data-profile-id="<?= $profile['id']; ?>" onclick="editProfile(<?= $profile['id']; ?>)">
                                                     <i class="fa fa-pencil"></i>
@@ -256,6 +288,12 @@ if ($sessionName) {
                                                 </button>
                                             </div>
                                         </td>
+                                        <td><strong><?= htmlspecialchars($profile['profile_name']); ?></strong></td>
+                                        <td>Rp <?= number_format($profile['price_monthly'], 0, ',', '.'); ?></td>
+                                        <td><?= htmlspecialchars($profile['mikrotik_profile_normal']); ?></td>
+                                        <td><?= htmlspecialchars($profile['mikrotik_profile_isolation']); ?></td>
+                                        <td><?= htmlspecialchars($profile['speed_label'] ?? '-'); ?></td>
+                                        <td><?= date('d M Y H:i', strtotime($profile['created_at'])); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

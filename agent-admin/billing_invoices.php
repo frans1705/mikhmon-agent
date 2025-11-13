@@ -172,35 +172,22 @@ $session = $_GET['session'] ?? ($_SESSION['session'] ?? '');
     margin-bottom: 0;
 }
 
-.invoice-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
+@media (max-width: 768px) {
+    .invoice-table th,
+    .invoice-table td {
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .invoice-actions,
+    .invoice-table .btn-group {
+        justify-content: flex-start;
+    }
 }
 
-.invoice-summary .box {
-    border-radius: 14px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-    min-height: 90px;
-    color: #fff;
-}
-
-.invoice-summary .box.bg-blue {
-    background: linear-gradient(135deg, #2563eb, #60a5fa);
-}
-
-.invoice-summary .box.bg-green {
-    background: linear-gradient(135deg, #059669, #10b981);
-}
-
-.invoice-summary .box.bg-red {
-    background: linear-gradient(135deg, #dc2626, #f87171);
-}
-
-.invoice-summary .box.bg-yellow {
-    background: linear-gradient(135deg, #f59e0b, #facc15);
-    color: #1f2937;
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
 }
 
 .invoice-table {
@@ -217,6 +204,17 @@ $session = $_GET['session'] ?? ($_SESSION['session'] ?? '');
 .invoice-table th {
     background: #f3f4f6;
     font-weight: 600;
+}
+
+.invoice-table .action-cell {
+    min-width: 110px;
+}
+
+.invoice-table .btn-group,
+.invoice-actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
 .badge-status {
@@ -306,6 +304,19 @@ $session = $_GET['session'] ?? ($_SESSION['session'] ?? '');
     from { transform: translateY(-12px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+
+@media (max-width: 768px) {
+    .invoice-table th,
+    .invoice-table td {
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .invoice-actions,
+    .invoice-table .btn-group {
+        justify-content: flex-start;
+    }
+}
 </style>
 
 <div class="billing-module">
@@ -375,12 +386,12 @@ $session = $_GET['session'] ?? ($_SESSION['session'] ?? '');
                                 <table class="invoice-table">
                                     <thead>
                                         <tr>
+                                            <th style="width: 110px;">Aksi</th>
                                             <th>ID</th>
                                             <th>Periode</th>
                                             <th>Nominal</th>
                                             <th>Jatuh Tempo</th>
                                             <th>Status</th>
-                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -391,12 +402,7 @@ $session = $_GET['session'] ?? ($_SESSION['session'] ?? '');
                                         <?php else: ?>
                                             <?php foreach ($quickSearchInvoices as $invoice): ?>
                                                 <tr>
-                                                    <td>#<?= (int)$invoice['id']; ?></td>
-                                                    <td><?= htmlspecialchars($invoice['period']); ?></td>
-                                                    <td>Rp <?= number_format($invoice['amount'], 0, ',', '.'); ?></td>
-                                                    <td><?= date('d M Y', strtotime($invoice['due_date'])); ?></td>
-                                                    <td><span class="badge-status <?= htmlspecialchars(strtolower($invoice['status'] ?? 'unpaid')); ?>"><?= htmlspecialchars(ucfirst($invoice['status'] ?? 'unpaid')); ?></span></td>
-                                                    <td>
+                                                    <td class="action-cell">
                                                         <div class="invoice-actions">
                                                             <button type="button" class="btn btn-sm btn-success" onclick="openQuickMarkPaidModal(<?= (int)$invoice['id']; ?>)">
                                                                 <i class="fa fa-check"></i>
@@ -409,6 +415,11 @@ $session = $_GET['session'] ?? ($_SESSION['session'] ?? '');
                                                             </button>
                                                         </div>
                                                     </td>
+                                                    <td>#<?= (int)$invoice['id']; ?></td>
+                                                    <td><?= htmlspecialchars($invoice['period']); ?></td>
+                                                    <td>Rp <?= number_format($invoice['amount'], 0, ',', '.'); ?></td>
+                                                    <td><?= date('d M Y', strtotime($invoice['due_date'])); ?></td>
+                                                    <td><span class="badge-status <?= htmlspecialchars(strtolower($invoice['status'] ?? 'unpaid')); ?>"><?= htmlspecialchars(ucfirst($invoice['status'] ?? 'unpaid')); ?></span></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         <?php endif; ?>
@@ -419,22 +430,38 @@ $session = $_GET['session'] ?? ($_SESSION['session'] ?? '');
                     </div>
                 </div>
 
-                <div class="invoice-summary">
-                    <div class="box bg-blue bmh-75">
-                        <h1><?= number_format($summary['total'], 0); ?></h1>
-                        <div><i class="fa fa-list"></i> Invoice Periode <?= htmlspecialchars($currentPeriod); ?></div>
+                <div class="row mb-3">
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-blue bmh-75">
+                            <h1><?= number_format($summary['total'], 0); ?>
+                                <span style="font-size: 15px;">total</span>
+                            </h1>
+                            <div><i class="fa fa-list"></i> Invoice Periode <?= htmlspecialchars($currentPeriod); ?></div>
+                        </div>
                     </div>
-                    <div class="box bg-green bmh-75">
-                        <h1><?= number_format($summary['paid'], 0); ?></h1>
-                        <div><i class="fa fa-check"></i> Sudah Dibayar</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-green bmh-75">
+                            <h1><?= number_format($summary['paid'], 0); ?>
+                                <span style="font-size: 15px;">paid</span>
+                            </h1>
+                            <div><i class="fa fa-check"></i> Sudah Dibayar</div>
+                        </div>
                     </div>
-                    <div class="box bg-red bmh-75">
-                        <h1><?= number_format($summary['unpaid'], 0); ?></h1>
-                        <div><i class="fa fa-times"></i> Belum Bayar</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-red bmh-75">
+                            <h1><?= number_format($summary['unpaid'], 0); ?>
+                                <span style="font-size: 15px;">unpaid</span>
+                            </h1>
+                            <div><i class="fa fa-times"></i> Belum Bayar</div>
+                        </div>
                     </div>
-                    <div class="box bg-yellow bmh-75">
-                        <h1>Rp <?= number_format($summary['paid_amount'], 0, ',', '.'); ?></h1>
-                        <div><i class="fa fa-money"></i> Pendapatan Terkumpul</div>
+                    <div class="col-3 col-box-6">
+                        <div class="box bg-yellow bmh-75">
+                            <h1>Rp <?= number_format($summary['paid_amount'], 0, ',', '.'); ?>
+                                <span style="font-size: 15px;">revenue</span>
+                            </h1>
+                            <div><i class="fa fa-money"></i> Pendapatan Terkumpul</div>
+                        </div>
                     </div>
                 </div>
 

@@ -87,6 +87,7 @@ $session = $_GET['session'] ?? (isset($session) ? $session : '');
         grid-template-columns: 1fr;
     }
 }
+
 </style>
 
 <div class="row">

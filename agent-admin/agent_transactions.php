@@ -33,6 +33,37 @@ $session = $_GET['session'] ?? (isset($session) ? $session : '');
     background: #fee2e2;
     color: #991b1b;
 }
+
+.badge-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+}
+
+.status-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-failed {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-note {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #475569;
+}
 </style>
 
 <div class="row">
@@ -75,6 +106,8 @@ $session = $_GET['session'] ?? (isset($session) ? $session : '');
                     <th>Tanggal</th>
                     <th>Tipe</th>
                     <th>Jumlah</th>
+                    <th>Status</th>
+                    <th>SN</th>
                     <th>Saldo Sebelum</th>
                     <th>Saldo Sesudah</th>
                     <th>Keterangan</th>
@@ -87,6 +120,39 @@ $session = $_GET['session'] ?? (isset($session) ? $session : '');
                     <td><span class="badge badge-<?= $trx['transaction_type']; ?>"><?= ucfirst($trx['transaction_type']); ?></span></td>
                     <td style="font-weight: bold; color: <?= $trx['transaction_type'] == 'topup' ? '#10b981' : '#ef4444'; ?>">
                         <?= $trx['transaction_type'] == 'topup' ? '+' : '-'; ?>Rp <?= number_format($trx['amount'], 0, ',', '.'); ?>
+                    </td>
+                    <td>
+                        <?php if ($trx['transaction_type'] === 'digiflazz'): ?>
+                            <?php
+                                $statusRaw = strtolower($trx['digiflazz_status'] ?? '');
+                                $statusClass = 'status-pending';
+                                $statusLabel = 'PENDING';
+
+                                if (!$statusRaw || in_array($statusRaw, ['success', 'sukses', 'berhasil', 'ok'])) {
+                                    $statusClass = 'status-success';
+                                    $statusLabel = 'BERHASIL';
+                                } elseif (in_array($statusRaw, ['pending', 'process', 'processing', 'menunggu'])) {
+                                    $statusClass = 'status-pending';
+                                    $statusLabel = 'PENDING';
+                                } else {
+                                    $statusClass = 'status-failed';
+                                    $statusLabel = strtoupper($statusRaw);
+                                }
+                            ?>
+                            <span class="badge-status <?= $statusClass; ?>"><?= htmlspecialchars($statusLabel); ?></span>
+                            <?php if (!empty($trx['digiflazz_message'])): ?>
+                                <div class="status-note"><?= htmlspecialchars($trx['digiflazz_message']); ?></div>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($trx['transaction_type'] === 'digiflazz' && !empty($trx['digiflazz_serial'])): ?>
+                            <span class="badge-status" style="background:#e0f2fe;color:#0f172a;font-family:'Courier New',monospace;letter-spacing:0.4px;"><?= htmlspecialchars($trx['digiflazz_serial']); ?></span>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
                     </td>
                     <td>Rp <?= number_format($trx['balance_before'], 0, ',', '.'); ?></td>
                     <td>Rp <?= number_format($trx['balance_after'], 0, ',', '.'); ?></td>

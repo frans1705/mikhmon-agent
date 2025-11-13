@@ -30,7 +30,7 @@ if (isset($_POST['update_agent'])) {
         'phone' => trim($_POST['phone']),
         'email' => trim($_POST['email']),
         'level' => $_POST['level'],
-        'commission_percent' => floatval($_POST['commission_percent']),
+        'commission_amount' => floatval($_POST['commission_amount']),
         'status' => $_POST['status'],
         'notes' => trim($_POST['notes'])
     ];
@@ -132,8 +132,8 @@ if (isset($_POST['update_agent'])) {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Komisi (%)</label>
-                    <input type="number" name="commission_percent" class="form-control" value="<?= $agentData['commission_percent']; ?>" min="0" max="100" step="0.1">
+                    <label>Komisi (Rp)</label>
+                    <input type="number" name="commission_amount" class="form-control" value="<?= $agentData['commission_amount']; ?>" min="0" step="1">
                 </div>
             </div>
 

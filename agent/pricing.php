@@ -124,27 +124,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
             } else {
                 // Insert
-                $sql = "INSERT INTO agent_profile_pricing 
-                        (agent_id, profile_name, display_name, description, price, original_price, is_active, is_featured, icon, color, user_type)
-                        VALUES (:agent_id, :profile_name, :display_name, :description, :price, :original_price, :is_active, :is_featured, :icon, :color, :user_type)";
-                
-                $stmt = $conn->prepare($sql);
-                $stmt->execute([
+                $checkStmt = $conn->prepare("SELECT id FROM agent_profile_pricing WHERE agent_id = :agent_id AND profile_name = :profile_name LIMIT 1");
+                $checkStmt->execute([
                     ':agent_id' => $agent_id,
-                    ':profile_name' => $profile_name,
-                    ':display_name' => $display_name,
-                    ':description' => $description,
-                    ':price' => $price,
-                    ':original_price' => $original_price,
-                    ':is_active' => $is_active,
-                    ':is_featured' => $is_featured,
-                    ':icon' => $icon,
-                    ':color' => $color,
-                    ':user_type' => $user_type
+                    ':profile_name' => $profile_name
                 ]);
+
+                if ($checkStmt->fetch(PDO::FETCH_ASSOC)) {
+                    $error_message = "Profil MikroTik tersebut sudah memiliki harga. Gunakan menu edit untuk memperbarui.";
+                } else {
+                    $sql = "INSERT INTO agent_profile_pricing 
+                            (agent_id, profile_name, display_name, description, price, original_price, is_active, is_featured, icon, color, user_type)
+                            VALUES (:agent_id, :profile_name, :display_name, :description, :price, :original_price, :is_active, :is_featured, :icon, :color, :user_type)";
+                    
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute([
+                        ':agent_id' => $agent_id,
+                        ':profile_name' => $profile_name,
+                        ':display_name' => $display_name,
+                        ':description' => $description,
+                        ':price' => $price,
+                        ':original_price' => $original_price,
+                        ':is_active' => $is_active,
+                        ':is_featured' => $is_featured,
+                        ':icon' => $icon,
+                        ':color' => $color,
+                        ':user_type' => $user_type
+                    ]);
+
+                    $success_message = "Pricing berhasil disimpan!";
+                }
             }
             
-            $success_message = "Pricing berhasil disimpan!";
+            if (!isset($error_message)) {
+                $success_message = $success_message ?? "Pricing berhasil disimpan!";
+            }
         } catch (Exception $e) {
             $error_message = "Error: " . $e->getMessage();
         }

@@ -26,7 +26,7 @@ if (isset($_POST['add_agent'])) {
     $password = $_POST['password'];
     $balance = floatval($_POST['balance']);
     $level = $_POST['level'];
-    $commissionPercent = floatval($_POST['commission_percent']);
+    $commissionAmount = floatval($_POST['commission_amount']);
     $notes = trim($_POST['notes']);
     
     // Validation
@@ -47,7 +47,7 @@ if (isset($_POST['add_agent'])) {
                 'balance' => $balance,
                 'status' => 'active',
                 'level' => $level,
-                'commission_percent' => $commissionPercent,
+                'commission_amount' => $commissionAmount,
                 'created_by' => $_SESSION['mikhmon'],
                 'notes' => $notes
             ];
@@ -198,10 +198,10 @@ if (isset($_POST['add_agent'])) {
                     </div>
 
                     <div class="form-group">
-                        <label>Komisi (%)</label>
-                        <input type="number" name="commission_percent" class="form-control" 
-                               value="<?= htmlspecialchars($_POST['commission_percent'] ?? '5'); ?>" 
-                               min="0" max="100" step="0.1">
+                        <label>Komisi</label>
+                        <input type="number" name="commission_amount" class="form-control" 
+                               value="<?= htmlspecialchars($_POST['commission_amount'] ?? '0'); ?>" 
+                               min="0" step="1000">
                     </div>
                 </div>
 

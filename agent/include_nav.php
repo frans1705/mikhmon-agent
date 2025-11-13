@@ -18,11 +18,19 @@ $currentPage = strtolower($currentPage);
 $pageMap = [
     'dashboard.php' => 'dashboard',
     'vouchers.php' => 'vouchers',
+    'digital_products.php' => 'digiflazz',
     'transactions.php' => 'transactions',
+    'billing_payments.php' => 'billing_payments',
     'logout.php' => 'logout'
 ];
 
 $currentPageKey = $pageMap[$currentPage] ?? '';
+$dashboardActive = ($currentPageKey === 'dashboard' || strpos($currentPage, 'dashboard') !== false);
+$vouchersActive = ($currentPageKey === 'vouchers' || strpos($currentPage, 'voucher') !== false);
+$digiflazzActive = ($currentPageKey === 'digiflazz' || (strpos($currentPage, 'digital') !== false && strpos($currentPage, 'transactions') === false));
+$transactionsActive = ($currentPageKey === 'transactions' || strpos($currentPage, 'transaction') !== false);
+$billingPaymentsActive = ($currentPageKey === 'billing_payments' || strpos($currentPage, 'billing_payments') !== false);
+$logoutActive = ($currentPageKey === 'logout' || strpos($currentPage, 'logout') !== false);
 ?>
 <div class="navbar-top">
     <div class="navbar-top-left">
@@ -40,6 +48,12 @@ $currentPageKey = $pageMap[$currentPage] ?? '';
         <a href="vouchers.php" class="navbar-menu-item <?= $vouchersActive ? 'active' : ''; ?>">
             <i class="fa fa-ticket"></i> Vouchers
         </a>
+        <a href="digital_products.php" class="navbar-menu-item <?= $digiflazzActive ? 'active' : ''; ?>">
+            <i class="fa fa-bolt"></i> Digital Products
+        </a>
+        <a href="billing_payments.php" class="navbar-menu-item <?= $billingPaymentsActive ? 'active' : ''; ?>">
+            <i class="fa fa-money"></i> Billing Payments
+        </a>
         <a href="transactions.php" class="navbar-menu-item <?= $transactionsActive ? 'active' : ''; ?>">
             <i class="fa fa-history"></i> Transactions
         </a>
@@ -53,23 +67,33 @@ $currentPageKey = $pageMap[$currentPage] ?? '';
 <?php
 $dashboardActive = ($currentPageKey == 'dashboard' || strpos($currentPage, 'dashboard') !== false);
 $vouchersActive = ($currentPageKey == 'vouchers' || strpos($currentPage, 'voucher') !== false);
+$digiflazzActive = ($currentPageKey == 'digiflazz' || (strpos($currentPage, 'digital') !== false && strpos($currentPage, 'transactions') === false));
 $transactionsActive = ($currentPageKey == 'transactions' || strpos($currentPage, 'transaction') !== false);
+$billingPaymentsActive = ($currentPageKey == 'billing_payments' || strpos($currentPage, 'billing_payments') !== false);
 $logoutActive = ($currentPageKey == 'logout' || strpos($currentPage, 'logout') !== false);
 ?>
 <nav class="bottom-nav" id="agentBottomNav" style="position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; max-width: 100vw !important; background-color: #3a4149 !important; display: flex !important; justify-content: space-around !important; align-items: center !important; padding: 8px 0 !important; z-index: 1000 !important; flex-wrap: nowrap !important; overflow: hidden !important; box-sizing: border-box !important;">
-    <a href="dashboard.php" class="nav-item <?= $dashboardActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 25% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $dashboardActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
+    <a href="dashboard.php" class="nav-item <?= $dashboardActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 20% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $dashboardActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
         <i class="fa fa-dashboard" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 20px !important; margin-bottom: 2px !important;"></i>
         <span class="nav-label" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 10px !important; line-height: 1.2 !important; white-space: nowrap !important;">Dashboard</span>
     </a>
-    <a href="vouchers.php" class="nav-item <?= $vouchersActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 25% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $vouchersActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
+    <a href="vouchers.php" class="nav-item <?= $vouchersActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 20% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $vouchersActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
         <i class="fa fa-ticket" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 20px !important; margin-bottom: 2px !important;"></i>
         <span class="nav-label" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 10px !important; line-height: 1.2 !important; white-space: nowrap !important;">Vouchers</span>
     </a>
-    <a href="transactions.php" class="nav-item <?= $transactionsActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 25% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $transactionsActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
+    <a href="digital_products.php" class="nav-item <?= $digiflazzActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 20% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $digiflazzActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
+        <i class="fa fa-bolt" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 20px !important; margin-bottom: 2px !important;"></i>
+        <span class="nav-label" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 10px !important; line-height: 1.2 !important; white-space: nowrap !important;">Digital</span>
+    </a>
+    <a href="billing_payments.php" class="nav-item <?= $billingPaymentsActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 20% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $billingPaymentsActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
+        <i class="fa fa-money" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 20px !important; margin-bottom: 2px !important;"></i>
+        <span class="nav-label" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 10px !important; line-height: 1.2 !important; white-space: nowrap !important;">Billing</span>
+    </a>
+    <a href="transactions.php" class="nav-item <?= $transactionsActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 20% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $transactionsActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
         <i class="fa fa-history" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 20px !important; margin-bottom: 2px !important;"></i>
         <span class="nav-label" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 10px !important; line-height: 1.2 !important; white-space: nowrap !important;">Transactions</span>
     </a>
-    <a href="logout.php" class="nav-item <?= $logoutActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 25% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $logoutActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
+    <a href="logout.php" class="nav-item <?= $logoutActive ? 'active' : ''; ?>" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 20% !important; visibility: visible !important; opacity: 1 !important; text-decoration: none !important; color: <?= $logoutActive ? '#20a8d8' : '#999'; ?> !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;">
         <i class="fa fa-sign-out" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 20px !important; margin-bottom: 2px !important;"></i>
         <span class="nav-label" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 10px !important; line-height: 1.2 !important; white-space: nowrap !important;">Logout</span>
     </a>
@@ -247,8 +271,8 @@ $logoutActive = ($currentPageKey == 'logout' || strpos($currentPage, 'logout') !
 .content-wrapper {
     margin-top: 50px;
     padding: 10px;
-    padding-bottom: 80px; /* Space for bottom nav */
-    min-height: calc(100vh - 130px);
+    padding-bottom: 10px; 
+    min-height: calc(100vh - 60px);
 }
 
 /* Desktop - show top navbar with menu, hide bottom nav */
@@ -431,7 +455,7 @@ $logoutActive = ($currentPageKey == 'logout' || strpos($currentPage, 'logout') !
                 // Force bottom nav to be visible on mobile
                 bottomNav.style.cssText = 'position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; display: flex !important; z-index: 1000 !important; flex-wrap: nowrap !important; overflow: visible !important;';
                 
-                // Ensure all 4 nav items are visible and fit within screen
+                // Ensure nav items are visible and fit within screen
                 navItems.forEach(function(item, index) {
                     item.style.cssText = 'display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; flex: 1 1 0 !important; min-width: 0 !important; max-width: 25% !important; visibility: visible !important; opacity: 1 !important; overflow: hidden !important; height: auto !important; width: auto !important; padding: 4px 2px !important; margin: 0 !important; box-sizing: border-box !important;';
                     
@@ -448,7 +472,6 @@ $logoutActive = ($currentPageKey == 'logout' || strpos($currentPage, 'logout') !
                     }
                 });
                 
-                // Ensure nav container doesn't overflow
                 bottomNav.style.cssText = 'position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100vw !important; max-width: 100% !important; background-color: #3a4149 !important; display: flex !important; justify-content: space-around !important; align-items: center !important; padding: 6px 0 !important; z-index: 1000 !important; flex-wrap: nowrap !important; overflow: hidden !important; box-sizing: border-box !important;';
                 
                 // Ensure content has padding for bottom nav
@@ -493,4 +516,3 @@ $logoutActive = ($currentPageKey == 'logout' || strpos($currentPage, 'logout') !
     }
 })();
 </script>
-

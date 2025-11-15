@@ -393,7 +393,7 @@ if (isset($_POST['test_whatsapp'])) {
             <form method="POST">
                 <div class="form-group">
                     <label>Nomor WhatsApp Test:</label>
-                    <input type="text" name="test_number" placeholder="08123456789 atau 628123456789" required>
+                    <input type="text" name="test_number" placeholder="085174421705 atau 6285174421705" required>
                 </div>
                 <button type="submit" name="test_whatsapp" class="btn btn-success">📤 Kirim Pesan Test</button>
             </form>
@@ -455,3 +455,4 @@ if (isset($_POST['test_whatsapp'])) {
         // Show initial config
         showGatewayConfig();
     </script>
+
